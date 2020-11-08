@@ -1,0 +1,37 @@
+{
+  "name": "jshow-device-detect",
+  "version": "1.0.0",
+  "description": "jshow detect device",
+  "main": "index.ts",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/j-show/jshow-device-detect.git"
+  },
+  "author": "j-Show",
+  "license": "MIT License",
+  "homepage": "https://github.com/j-show/jshow-device-detect",
+  "dependencies": {},
+  "devDependencies": {
+    "typescript": "*",
+    "husky": "*",
+    "lint-staged": "*",
+    "prettier": "*"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.{ts, tsx}": [
+      "prettier --write",
+      "tslint --fix",
+      "git add"
+    ],
+    "*.{json,md}": [
+      "prettier --write",
+      "git add"
+    ]
+  }
+}

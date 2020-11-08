@@ -1,0 +1,30 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@app/*": ["*"]
+    },
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "target": "es2015",
+    "allowSyntheticDefaultImports": true,
+    "lib": ["dom", "es2017"],
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "noEmit": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "preserveConstEnums": true,
+    "removeComments": false,
+    "resolveJsonModule": true,
+    "skipLibCheck": true,
+    "sourceMap": true,
+    "strict": true,
+    "forceConsistentCasingInFileNames": true,
+    "esModuleInterop": true,
+    "isolatedModules": true,
+    "declaration": true
+  },
+  "include": ["./"],
+  "exclude": ["./node_modules"]
+}
