@@ -5,7 +5,7 @@
   "main": "index.ts",
   "scripts": {
     "lint": "eslint . --ext .ts",
-    "fix": "prettier --write . && yarn lint"
+    "fix": "prettier --write ./src && yarn lint"
   },
   "repository": {
     "type": "git",
