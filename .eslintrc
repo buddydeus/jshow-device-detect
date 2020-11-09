@@ -1,9 +1,27 @@
 {
   "parser": "@typescript-eslint/parser",
-  "extends": ["prettier", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
-  "plugins": ["@typescript-eslint"],
+  "plugins": ["@typescript-eslint", "prettier"],
+  "extends": [
+    "eslint:recommended",
+    "plugin:@typescript-eslint/eslint-recommended",
+    "plugin:@typescript-eslint/recommended",
+    "prettier",
+    "prettier/@typescript-eslint",
+    "plugin:prettier/recommended"
+  ],
+  "parserOptions": {
+    "sourceType": "module"
+  },
+  "rules": {
+    "prettier/prettier": 2,
+    "import/prefer-default-export": 0,
+    "no-useless-escape": 0,
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "@typescript-eslint/no-explicit-any": 0
+  },
   "globals": {
     "window": true,
-    "fetch": true
+    "fetch": true,
+    "navigator": true
   }
 }

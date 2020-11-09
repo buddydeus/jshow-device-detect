@@ -3,7 +3,10 @@
   "version": "1.0.0",
   "description": "jshow detect device",
   "main": "index.ts",
-  "scripts": {},
+  "scripts": {
+    "lint": "eslint . --ext .ts",
+    "fix": "prettier --write . && yarn lint"
+  },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/j-show/jshow-device-detect.git"
@@ -30,7 +33,7 @@
     }
   },
   "lint-staged": {
-    "*.{ts, tsx}": [
+    "*.{jx, ts, tsx}": [
       "prettier --write",
       "eslint --fix",
       "git add"

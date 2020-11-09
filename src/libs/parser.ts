@@ -31,8 +31,9 @@ class UAParser {
     return this._targetObject.cpu;
   }
 
-  private _userAgent: string = '';
+  private _userAgent = '';
   private _targetObject: any = {};
+
   constructor(ua?: string) {
     this.reset(ua);
   }

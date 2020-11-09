@@ -26,7 +26,7 @@ class UADetect {
     }
   };
 
-  public isSafari = (ua?: string, onlyMobile: boolean = false) => {
+  public isSafari = (ua?: string, onlyMobile = false) => {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     switch (browser.name) {
       case BROWSER_TYPES.SAFARI:
@@ -69,7 +69,7 @@ class UADetect {
     return browser.name === BROWSER_TYPES.EDGE;
   };
 
-  public isWindows = (ua?: string, onlyMobile: boolean = false) => {
+  public isWindows = (ua?: string, onlyMobile = false) => {
     const os = ua ? this.parser.getOS(ua) : this.parser.os;
     return os.name === (onlyMobile ? OS_TYPES.WINDOWS_PHONE : OS_TYPES.WINDOWS);
   };
