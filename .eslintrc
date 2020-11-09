@@ -1,0 +1,9 @@
+{
+  "parser": "@typescript-eslint/parser",
+  "extends": ["prettier", "prettier/@typescript-eslint", "plugin:prettier/recommended"],
+  "plugins": ["@typescript-eslint"],
+  "globals": {
+    "window": true,
+    "fetch": true
+  }
+}
