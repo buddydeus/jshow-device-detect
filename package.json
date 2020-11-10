@@ -2,17 +2,30 @@
   "name": "jshow-device-detect",
   "version": "1.0.0",
   "description": "jshow detect device",
-  "main": "index.ts",
+  "main": "dist/index.js",
+  "types": "dist/@types/index.d.ts",
+  "files": [
+    "/dist/*",
+    "/package.json",
+    "/README.md"
+  ],
   "scripts": {
-    "lint": "eslint ./src --ext .ts",
-    "fix": "prettier --write ./src && yarn lint"
+    "clean": "rm -rf ./dist",
+    "build": "yarn clean && yarn build:ts",
+    "build:ts": "tsc --project tsconfig.json",
+    "lint": "eslint src --quiet",
+    "lint:fix": "eslint src --quiet --fix",
+    "fix": "prettier --write ./src && yarn lint:fix",
+    "check": "tsc --noEmit",
+    "watch": "tsc --noEmit --watch",
+    "prepublishOnly": "yarn build"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/j-show/jshow-device-detect.git"
   },
   "author": "j-Show",
-  "license": "MIT License",
+  "license": "MIT",
   "homepage": "https://github.com/j-show/jshow-device-detect",
   "publishConfig": {
     "registry": "https://npm.pkg.github.com/"
@@ -39,6 +52,7 @@
     "*.{jx, ts, tsx}": [
       "prettier --write",
       "eslint --fix",
+      "yarn check",
       "git add"
     ],
     "*.{json,md}": [

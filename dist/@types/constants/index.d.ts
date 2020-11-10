@@ -1,0 +1,43 @@
+export declare const MODEL = 'model';
+export declare const NAME = 'name';
+export declare const TYPE = 'type';
+export declare const VENDOR = 'vendor';
+export declare const VERSION = 'version';
+export declare const ARCHITECTURE = 'architecture';
+export declare const CONSOLE = 'console';
+export declare const MOBILE = 'mobile';
+export declare const TABLET = 'tablet';
+export declare const SMARTTV = 'smarttv';
+export declare const WEARABLE = 'wearable';
+export declare const EMBEDDED = 'embedded';
+export declare const DEVICE_TYPES: {
+  MOBILE: string;
+  TABLET: string;
+  SMART_TV: string;
+  CONSOLE: string;
+  WEARABLE: string;
+  BROWSER: undefined;
+};
+export declare const BROWSER_TYPES: {
+  CHROME: string;
+  FIREFOX: string;
+  OPERA: string;
+  YANDEX: string;
+  SAFARI: string;
+  INTERNET_EXPLORER: string;
+  EDGE: string;
+  CHROMIUM: string;
+  IE: string;
+  MOBILE_SAFARI: string;
+  EDGE_CHROMIUM: string;
+  MIUI: string;
+  WECHAT: string;
+  WECHAT_DESKTOP: string;
+};
+export declare const OS_TYPES: {
+  IOS: string;
+  ANDROID: string;
+  WINDOWS_PHONE: string;
+  WINDOWS: string;
+  MAC_OS: string;
+};
