@@ -28,7 +28,7 @@
   "license": "MIT",
   "homepage": "https://github.com/j-show/jshow-device-detect",
   "publishConfig": {
-    "registry": "https://npm.pkg.github.com/"
+    "registry": "https://registry.npmjs.org/"
   },
   "dependencies": {},
   "devDependencies": {
