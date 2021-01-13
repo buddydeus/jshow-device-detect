@@ -10,6 +10,34 @@ class UADetect {
     this.parser = new UAParser(ua);
   }
 
+  public get userAgent() {
+    return this.parser.userAgent;
+  }
+
+  public set userAgent(value: string) {
+    this.parser.reset(value);
+  }
+
+  public get browser() {
+    return this.parser.browser;
+  }
+
+  public get engine() {
+    return this.parser.engine;
+  }
+
+  public get os() {
+    return this.parser.os;
+  }
+
+  public get device() {
+    return this.parser.device;
+  }
+
+  public get cpu() {
+    return this.parser.cpu;
+  }
+
   public reset = (ua?: string) => {
     this.parser.reset(ua);
     return this;
