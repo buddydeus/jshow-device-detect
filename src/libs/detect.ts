@@ -6,6 +6,7 @@ import UAParser from './parser';
 
 class UADetect {
   private parser: UAParser;
+
   constructor(ua?: string) {
     this.parser = new UAParser(ua);
   }
@@ -38,12 +39,12 @@ class UADetect {
     return this.parser.cpu;
   }
 
-  public reset = (ua?: string) => {
+  public reset(ua?: string) {
     this.parser.reset(ua);
     return this;
-  };
+  }
 
-  public isMobile = (ua?: string) => {
+  public isMobile(ua?: string) {
     const device = ua ? this.parser.getDevice(ua) : this.parser.device;
     switch (device.type) {
       case DEVICE_TYPES.MOBILE:
@@ -52,9 +53,9 @@ class UADetect {
       default:
         return false;
     }
-  };
+  }
 
-  public isSafari = (ua?: string, onlyMobile = false) => {
+  public isSafari(ua?: string, onlyMobile = false) {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     switch (browser.name) {
       case BROWSER_TYPES.SAFARI:
@@ -64,14 +65,14 @@ class UADetect {
       default:
         return false;
     }
-  };
+  }
 
-  public isFirefox = (ua?: string) => {
+  public isFirefox(ua?: string) {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     return browser.name === BROWSER_TYPES.FIREFOX;
-  };
+  }
 
-  public isIE = (ua?: string) => {
+  public isIE(ua?: string) {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     switch (browser.name) {
       case BROWSER_TYPES.INTERNET_EXPLORER:
@@ -80,10 +81,10 @@ class UADetect {
       default:
         return false;
     }
-  };
+  }
 
-  public isEdge = (ua?: string, type?: 'Chromium' | 'Legacy') => {
-    const isChromium = this.isEdgeChromium(ua || this.parser.userAgent);
+  public isEdge(ua?: string, type?: 'Chromium' | 'Legacy') {
+    const isChromium = this.isEdgeChromium(ua);
     switch (type) {
       case 'Chromium':
         if (isChromium) return true;
@@ -95,29 +96,29 @@ class UADetect {
 
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     return browser.name === BROWSER_TYPES.EDGE;
-  };
+  }
 
-  public isWindows = (ua?: string, onlyMobile = false) => {
+  public isWindows(ua?: string, onlyMobile = false) {
     const os = ua ? this.parser.getOS(ua) : this.parser.os;
     return os.name === (onlyMobile ? OS_TYPES.WINDOWS_PHONE : OS_TYPES.WINDOWS);
-  };
+  }
 
-  public isAndroid = (ua?: string) => {
+  public isAndroid(ua?: string) {
     const os = ua ? this.parser.getOS(ua) : this.parser.os;
     return os.name === OS_TYPES.ANDROID;
-  };
+  }
 
-  public isMac = (ua?: string) => {
+  public isMac(ua?: string) {
     const os = ua ? this.parser.getOS(ua) : this.parser.os;
     return os.name === OS_TYPES.MAC_OS;
-  };
+  }
 
-  public isIOS = (ua?: string) => {
+  public isIOS(ua?: string) {
     const os = ua ? this.parser.getOS(ua) : this.parser.os;
     return os.name === OS_TYPES.IOS || this.isIOS13('iPad');
-  };
+  }
 
-  public isIOS13 = (type?: 'iPad' | 'iPhone' | 'iPod') => {
+  public isIOS13(type?: 'iPad' | 'iPhone' | 'iPod') {
     const nav = getNavigator();
     if (!nav) return false;
     const platform: string | false = nav.platform as string;
@@ -127,24 +128,24 @@ class UADetect {
       (type ? platform.indexOf(type) !== -1 : /iPad|iPhone|iPod/.test(platform)) ||
       (platform === 'MacIntel' && nav.maxTouchPoints > 1 && !window.MSStream)
     );
-  };
+  }
 
-  public isMIUI = (ua?: string) => {
+  public isMIUI(ua?: string) {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     return browser.name === BROWSER_TYPES.MIUI;
-  };
+  }
 
-  public isElectron = (ua?: string) => {
+  public isElectron(ua?: string) {
     const _ua = (ua || this.parser.userAgent).toLowerCase();
     return _ua ? /electron/.test(_ua) : false;
-  };
+  }
 
-  public isPad = (ua?: string) => {
+  public isPad(ua?: string) {
     const device = ua ? this.parser.getDevice(ua) : this.parser.device;
     return (device.type = DEVICE_TYPES.TABLET) || this.isIOS13('iPad');
-  };
+  }
 
-  public isWechat = (ua?: string, type: 'mobile' | 'desktop' | undefined = 'mobile') => {
+  public isWechat(ua?: string, type: 'mobile' | 'desktop' | undefined = 'mobile') {
     const browser = ua ? this.parser.getBrowser(ua) : this.parser.browser;
     switch (browser.name) {
       case BROWSER_TYPES.WECHAT:
@@ -154,12 +155,12 @@ class UADetect {
       default:
         return false;
     }
-  };
+  }
 
-  private isEdgeChromium = (ua: string) => {
+  private isEdgeChromium(ua?: string) {
     const _ua = ua || this.parser.userAgent;
     return _ua.indexOf('Edg/') !== -1;
-  };
+  }
 }
 
 export default UADetect;

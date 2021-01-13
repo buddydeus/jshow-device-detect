@@ -38,7 +38,7 @@ class UAParser {
     this.reset(ua);
   }
 
-  public reset = (ua?: string) => {
+  public reset(ua?: string) {
     // @ts-check;
     this._userAgent =
       ua || (typeof window !== 'undefined' && window.navigator && window.navigator.userAgent) || '';
@@ -53,38 +53,38 @@ class UAParser {
     };
 
     return this;
-  };
+  }
 
-  public getBrowser = (ua: string = this._userAgent) => {
+  public getBrowser(ua: string = this._userAgent) {
     const browser = { name: undefined, version: undefined, major: undefined };
     execRxp(browser, ua, REGEXP.browser);
     browser.major = getMajor(browser.version);
     return browser;
-  };
+  }
 
-  public getCPU = (ua: string = this._userAgent) => {
+  public getCPU(ua: string = this._userAgent) {
     const cpu = { architecture: undefined };
     execRxp(cpu, ua, REGEXP.cpu);
     return cpu;
-  };
+  }
 
-  public getDevice = (ua: string = this._userAgent) => {
+  public getDevice(ua: string = this._userAgent) {
     const device = { vendor: undefined, model: undefined, type: undefined };
     execRxp(device, ua, REGEXP.device);
     return device;
-  };
+  }
 
-  public getEngine = (ua: string = this._userAgent) => {
+  public getEngine(ua: string = this._userAgent) {
     const engine = { name: undefined, version: undefined };
     execRxp(engine, ua, REGEXP.engine);
     return engine;
-  };
+  }
 
-  public getOS = (ua: string = this._userAgent) => {
+  public getOS(ua: string = this._userAgent) {
     const os = { name: undefined, version: undefined };
     execRxp(os, ua, REGEXP.os);
     return os;
-  };
+  }
 
   public toString() {
     return this._targetObject.toString();
