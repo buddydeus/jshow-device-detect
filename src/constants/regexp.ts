@@ -1,18 +1,6 @@
 import { getLower, getStr, trimStr } from '../utils';
 
-import {
-  MODEL,
-  NAME,
-  TYPE,
-  VENDOR,
-  VERSION,
-  ARCHITECTURE,
-  CONSOLE,
-  MOBILE,
-  TABLET,
-  SMARTTV,
-  WEARABLE,
-} from './index';
+import { ARCHITECTURE, CONSOLE, MOBILE, MODEL, NAME, SMARTTV, TABLET, TYPE, VENDOR, VERSION, WEARABLE } from './index';
 
 const TAGS = {
   browser: {

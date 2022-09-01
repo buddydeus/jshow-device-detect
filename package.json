@@ -2,62 +2,67 @@
   "name": "jshow-device-detect",
   "version": "1.0.4",
   "description": "jshow detect device",
-  "main": "dist/index.js",
-  "types": "dist/@types/index.d.ts",
-  "files": [
-    "/dist/*",
-    "/package.json",
-    "/README.md"
-  ],
-  "scripts": {
-    "clean": "rm -rf ./dist",
-    "build": "yarn clean && yarn build:ts",
-    "build:ts": "tsc --project tsconfig.json",
-    "lint": "eslint src --quiet",
-    "lint:fix": "eslint src --quiet --fix",
-    "fix": "prettier --write ./src && yarn lint:fix",
-    "check": "tsc --noEmit",
-    "watch": "tsc --noEmit --watch",
-    "prepublishOnly": "yarn build"
-  },
+  "author": "j-Show",
+  "main": "lib/index.js",
+  "module": "lib-es/index.js",
+  "types": "lib/index.d.ts",
+  "files": ["/lib/*", "/lib-es/*", "/package.json", "/README.md"],
+  "keywords": ["device-detect", "device detect", "jshow", "@jshow", "jshow-device-detect", "@jshow-device-detect"],
+  "license": "MIT",
+  "homepage": "https://github.com/j-show/device-detect",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/j-show/jshow-device-detect.git"
+    "url": "git+https://github.com/j-show/device-detect.git"
   },
-  "author": "j-Show",
-  "license": "MIT",
-  "homepage": "https://github.com/j-show/jshow-device-detect",
   "publishConfig": {
     "registry": "https://registry.npmjs.org/"
   },
+  "scripts": {
+    "precommit": "lint-staged",
+    "prepublishOnly": "yarn clean && yarn build",
+    "build": "tsc --pretty -p ./tsconfig.build.json && tsc --pretty -p ./tsconfig.build.es.json",
+    "clean": "shx rm -rf lib && shx rm -rf lib-es",
+    "test": "jest --coverage"
+  },
   "dependencies": {},
   "devDependencies": {
-    "@typescript-eslint/eslint-plugin": "^4.6.1",
-    "@typescript-eslint/parser": "^4.6.1",
-    "eslint": "^7.13.0",
-    "eslint-config-prettier": "^6.15.0",
-    "eslint-plugin-prettier": "^3.1.4",
-    "husky": "^4.3.0",
-    "lint-staged": "^10.5.1",
-    "prettier": "^2.1.2",
-    "pretty-quick": "^3.1.0",
-    "typescript": "^4.0.5"
+    "@types/jest": "^27.5.1",
+    "@types/lodash": "^4.14.182",
+    "@types/node": "^17.0.33",
+    "@types/prettier": "^2.6.1",
+    "@types/shelljs": "^0.8.11",
+    "@typescript-eslint/eslint-plugin": "^5.23.0",
+    "@typescript-eslint/parser": "^5.23.0",
+    "eslint": "^8.15.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-eslint-plugin": "^4.1.0",
+    "eslint-plugin-import": "^2.26.0",
+    "eslint-plugin-jshow": "^1.0.2",
+    "eslint-plugin-node": "^11.1.0",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-simple-import-sort": "^7.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "husky": "^8.0.1",
+    "jest": "^28.1.0",
+    "lint-staged": "^12.4.1",
+    "lodash": "^4.17.21",
+    "mocha": "^10.0.0",
+    "prettier": "^2.6.2",
+    "shelljs": "^0.8.5",
+    "shx": "^0.3.4",
+    "standard": "^17.0.0",
+    "ts-jest": "^28.0.2",
+    "ts-node": "^10.7.0",
+    "type-coverage": "^2.21.1",
+    "typescript": "^4.6.4"
   },
-  "husky": {
-    "hooks": {
-      "pre-commit": "pretty-quick --staged"
-    }
+  "standard": {
+    "ignore": ["lib", "lib-es", "__snapshots__"]
   },
   "lint-staged": {
-    "*.{jx, ts, tsx}": [
-      "prettier --write",
-      "eslint --fix",
-      "yarn check",
-      "git add"
-    ],
-    "*.{json,md}": [
-      "prettier --write",
-      "git add"
-    ]
+    "*.ts": ["prettier --parser=typescript --write", "git add"],
+    "*.js": ["standard --fix", "git add"],
+    "*.md": ["prettier --parser=markdown --write", "git add"],
+    "*.json": ["prettier --parser=json --write", "git add"]
   }
 }

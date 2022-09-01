@@ -1,34 +1,8 @@
 {
-  "include": ["src"],
-  "exclude": ["node_modules"],
+  "extends": "./tsconfig.base.json",
+  "include": ["src", "index.d.ts"],
+  "exclude": ["node_modules", "lib", "lib-es", "**/*.spec.ts"],
   "compilerOptions": {
-    "module": "commonjs",
-    "target": "es5",
-    "lib": ["es2015", "es2017", "dom"],
-    "baseUrl": ".",
-    "paths": {
-      "@app/*": ["./src/*"]
-    },
-    "moduleResolution": "node",
-    "typeRoots": ["node_modules/@types"],
-    "outDir": "dist",
-    "declarationDir": "dist/@types",
-    "declaration": true,
-    "allowJs": true,
-    "skipLibCheck": true,
-    "resolveJsonModule": true,
-    "isolatedModules": true,
-    "esModuleInterop": true,
-    "strict": true,
-    "alwaysStrict": true,
-    "inlineSourceMap": true,
-    "removeComments": true,
-    "preserveConstEnums": true,
-    "experimentalDecorators": true,
-    "forceConsistentCasingInFileNames": true,
-    "noEmitOnError": true,
-    "noUnusedLocals": true,
-    "noUnusedParameters": true,
-    "noResolve": true
+    "baseUrl": "."
   }
 }

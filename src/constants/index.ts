@@ -17,7 +17,7 @@ export const DEVICE_TYPES = {
   SMART_TV: 'smarttv',
   CONSOLE: 'console',
   WEARABLE: 'wearable',
-  BROWSER: undefined,
+  BROWSER: void 0,
 };
 
 export const BROWSER_TYPES = {
