@@ -145,7 +145,7 @@ class UADetect {
 
   public isPad(ua?: string) {
     const device = ua ? this._parser.getDevice(ua) : this._parser.device;
-    return (device.type = DEVICE_TYPES.TABLET) || this.isIOS13('iPad');
+    return (device.type === DEVICE_TYPES.TABLET) || this.isIOS13('iPad');
   }
 
   public isWechat(ua?: string, type: 'mobile' | 'desktop' | undefined = 'mobile') {
