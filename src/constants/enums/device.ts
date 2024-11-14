@@ -65,8 +65,10 @@ export enum OSType {
   WindowsPhone = 'Windows Phone',
   /** macOS系统 */
   MacOS = 'Mac OS',
+  /** iPadOS系统 */
+  IPadOS = 'iPadOS',
   /** iOS系统 */
-  iOS = 'iOS',
+  IOS = 'iOS',
   /** 安卓系统 */
   Android = 'Android',
   /** Linux系统 */

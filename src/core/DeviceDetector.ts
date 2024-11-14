@@ -13,8 +13,14 @@ import {
   CompanyType,
   DEVICE_PATTERNS,
   COMPANY_MAP,
+  BROWSER_ENGINE_PATTERNS,
+  BROWSER_PATTERNS,
+  OS_PATTERNS,
 } from '../constants';
 import type { DeviceInfo, Browser, Engine, OS, Device, CPU } from '../types';
+import { BrowserParser } from './BrowserParser';
+import { OSParser } from './OSParser';
+import { DeviceParser } from './DeviceParser';
 
 /**
  * 处理可选 UA 的工具函数
@@ -49,256 +55,15 @@ export class DeviceDetector {
    * 解析后的设备信息缓存
    * @private
    */
-  private _deviceInfo: DeviceInfo;
+  private _cache: DeviceInfo | null = null;
 
   /**
    * 创建设备检测器实例
    * @param userAgent - 可选的用户代理字符串，如果不提供则使用当前浏览器的 UA
    */
-  constructor(userAgent?: string) {
+  constructor(ua: string = '') {
     this._ua =
-      userAgent ??
-      (typeof window !== 'undefined' ? window.navigator.userAgent : '');
-    this._deviceInfo = this.parseDeviceInfo();
-  }
-
-  /**
-   * 解析设备信息
-   * @returns {DeviceInfo} 完整的设备信对象
-   * @private
-   */
-  private parseDeviceInfo(): DeviceInfo {
-    return {
-      browser: this.parseBrowser(),
-      engine: this.parseEngine(),
-      os: this.parseOS(),
-      device: this.parseDevice(),
-      cpu: this.parseCPU(),
-    };
-  }
-
-  /**
-   * 解析浏览器信息
-   * @returns {Browser} 浏览器信息对象
-   * @private
-   */
-  private parseBrowser(): Browser {
-    const result = RegexParser.parse(this._ua, REGEXPS.browser);
-    return {
-      type: this.getBrowserType(result.name),
-      name: result.name || 'unknown',
-      version: result.version || '',
-      major: result.major,
-    };
-  }
-
-  /**
-   * 解析浏览器引擎信息
-   * @returns {Engine} 浏览器引擎信息对象
-   * @private
-   */
-  private parseEngine(): Engine {
-    const ua = this._ua.toLowerCase();
-    let engineName = EngineType.Unknown;
-    let engineVersion = '';
-
-    if (ua.includes('edge/')) {
-      engineName = EngineType.EdgeHTML;
-      const match = ua.match(/edge\/(\d+(\.\d+)?)/i);
-      engineVersion = match?.[1] || '';
-    } else if (ua.includes('chrome/') || ua.includes('edg/')) {
-      engineName = EngineType.Blink;
-      const match = ua.match(/(?:chrome|edg)\/(\d+(\.\d+)?)/i);
-      engineVersion = match?.[1] || '';
-    } else if (ua.includes('firefox/')) {
-      engineName = EngineType.Gecko;
-      const match = ua.match(/firefox\/(\d+(\.\d+)?)/i);
-      engineVersion = match?.[1] || '';
-    } else if (ua.includes('webkit')) {
-      engineName = EngineType.WebKit;
-      const match = ua.match(/webkit\/(\d+(\.\d+)?)/i);
-      engineVersion = match?.[1] || '';
-    }
-
-    return {
-      type: engineName,
-      name: engineName,
-      version: engineVersion,
-    };
-  }
-
-  /**
-   * 解析操作系统信息
-   * @returns {OS} 操作系统信息对象
-   * @private
-   */
-  private parseOS(): OS {
-    const result = RegexParser.parse(this._ua, REGEXPS.os);
-    const name = result.name || 'unknown';
-    const lowerName = name.toLowerCase();
-
-    // 特殊处理 macOS 的显示名称
-    const displayName =
-      lowerName === 'macos' || lowerName === 'mac os' ? 'Mac OS' : name;
-
-    return {
-      name: displayName,
-      version: result.version || '',
-      type: this.getOSType(name),
-    };
-  }
-
-  /**
-   * 获取操作系统类型
-   * @param name - 操作系统名称
-   * @returns {OSType} 操作系统类型枚举值
-   * @private
-   */
-  private getOSType(name?: string): OSType {
-    if (!name) return OSType.Unknown;
-
-    const lowerName = name.toLowerCase();
-    if (lowerName === 'mac os' || lowerName === 'macos') {
-      return OSType.MacOS;
-    }
-
-    return OS_MAP[lowerName] || OSType.Unknown;
-  }
-
-  /**
-   * 解析设备信息
-   * @returns {Device} 设备信息对象
-   * @private
-   */
-  private parseDevice(): Device {
-    const ua = this._ua.toLowerCase();
-    let deviceType = DeviceType.Desktop;
-    let vendor = '';
-    let model = '';
-
-    // 使用 DEVICE_PATTERNS 进行匹配
-    for (const { pattern, device } of DEVICE_PATTERNS) {
-      const matches = ua.match(pattern);
-      if (matches) {
-        deviceType = device.type || deviceType;
-        vendor = device.vendor || vendor;
-        model =
-          typeof device.model === 'string'
-            ? device.model
-            : device.model?.(matches) || '';
-        break;
-      }
-    }
-
-    return {
-      type: deviceType,
-      vendor,
-      model,
-      company: this.getCompanyType(vendor),
-    };
-  }
-
-  /**
-   * 解析CPU信息
-   * @returns {CPU} CPU信息对象
-   * @private
-   */
-  private parseCPU(): CPU {
-    const ua = this._ua.toLowerCase();
-    let architecture = CPUArchitecture.Unknown;
-
-    // iOS 设备默认为 ARM64
-    if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) {
-      architecture = CPUArchitecture.ARM64;
-    } else if (ua.includes('aarch64') || ua.includes('arm64')) {
-      architecture = CPUArchitecture.ARM64;
-    } else if (ua.includes('arm')) {
-      architecture = CPUArchitecture.ARM;
-    } else if (
-      ua.includes('x86_64') ||
-      ua.includes('amd64') ||
-      ua.includes('x64')
-    ) {
-      architecture = CPUArchitecture.x64;
-    } else if (
-      ua.includes('x86') ||
-      ua.includes('i686') ||
-      ua.includes('i386')
-    ) {
-      architecture = CPUArchitecture.x86;
-    }
-
-    return { architecture };
-  }
-
-  /**
-   * 获取浏览器类型
-   * @param name - 浏览器名称
-   * @returns {BrowserType} 浏览器类型枚举值
-   * @private
-   */
-  private getBrowserType(name?: string): BrowserType {
-    if (!name) return BrowserType.Unknown;
-    return BROWSER_MAP[name.toLowerCase()] || BrowserType.Unknown;
-  }
-
-  /**
-   * 获取引擎类型
-   * @param name - 引擎名称
-   * @returns {EngineType} 引擎类型枚举值
-   * @private
-   */
-  private getEngineType(name?: string): EngineType {
-    if (!name) return EngineType.Unknown;
-    return ENGINE_MAP[name.toLowerCase()] || EngineType.Unknown;
-  }
-
-  /**
-   * 获取设备类型
-   * @param type - 设备类型字符串
-   * @returns {DeviceType} 设备类型枚举值
-   * @private
-   */
-  private getDeviceType(type?: string): DeviceType {
-    if (!type) return DeviceType.Desktop;
-    return DEVICE_MAP[type.toLowerCase()] || DeviceType.Desktop;
-  }
-
-  /**
-   * 获取公司类型
-   * @param vendor - 设备制造商
-   * @returns {CompanyType} 公司类型枚举值
-   * @private
-   */
-  private getCompanyType(vendor: string): CompanyType {
-    if (!vendor) {
-      // 特殊处理腾讯产品和黑莓设备
-      const ua = this._ua.toLowerCase();
-
-      if (ua.includes('qqbrowser')) {
-        return CompanyType.Tencent;
-      }
-
-      if (ua.includes('bb10') || ua.includes('blackberry')) {
-        return CompanyType.BlackBerry;
-      }
-
-      return CompanyType.Unknown;
-    }
-
-    const vendorLower = vendor.toLowerCase();
-
-    // 通过厂商名称映射
-    const companyMap: Record<string, CompanyType> = {
-      apple: CompanyType.Apple,
-      huawei: CompanyType.Huawei,
-      google: CompanyType.Google,
-      samsung: CompanyType.Samsung,
-      blackberry: CompanyType.BlackBerry,
-      tencent: CompanyType.Tencent,
-    };
-
-    return companyMap[vendorLower] || CompanyType.Unknown;
+      ua || (typeof navigator !== 'undefined' ? navigator.userAgent : '');
   }
 
   /**
@@ -308,9 +73,40 @@ export class DeviceDetector {
    */
   public getDeviceInfo(ua?: string): DeviceInfo {
     if (ua) {
-      return new DeviceDetector(ua)._deviceInfo;
+      return new DeviceDetector(ua).getDeviceInfo();
     }
-    return this._deviceInfo;
+
+    if (!this._cache) {
+      const browserInfo = BrowserParser.parse(this._ua);
+      const engineInfo = this.detectEngine(browserInfo);
+      this._cache = {
+        browser: browserInfo,
+        engine: engineInfo,
+        os: OSParser.parse(this._ua),
+        device: DeviceParser.parse(this._ua),
+        cpu: { architecture: CPUArchitecture.Unknown },
+      };
+    }
+
+    return this._cache;
+  }
+
+  private detectEngine(browser: Browser): Engine {
+    const engineType = ENGINE_MAP[browser.type] || EngineType.Unknown;
+
+    return {
+      name: engineType,
+      version: this.getEngineVersion(),
+      type: engineType,
+      engine: engineType,
+    };
+  }
+
+  private getEngineVersion(): string {
+    const matches = this._ua.match(
+      /(?:webkit|gecko|trident|blink)\/?\s*(\d+(\.\d+)?)/i
+    );
+    return matches ? matches[1] : '';
   }
 
   /**
