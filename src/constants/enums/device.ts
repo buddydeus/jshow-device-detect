@@ -3,12 +3,12 @@
  * @enum {string}
  */
 export enum DeviceType {
+  /** 桌面设备 */
+  Desktop = 'desktop',
   /** 手机设备 */
   Phone = 'phone',
   /** 平板设备 */
-  Tablet = 'tablet',
-  /** 桌面设备 */
-  Desktop = 'desktop',
+  Pad = 'tablet',
   /** 智能电视 */
   SmartTV = 'smarttv',
   /** 游戏主机 */
@@ -61,6 +61,8 @@ export enum BrowserType {
 export enum OSType {
   /** Windows系统 */
   Windows = 'Windows',
+  /** Windows Server系统  */
+  WindowsServer = 'Windows Server',
   /** Windows Phone系统 */
   WindowsPhone = 'Windows Phone',
   /** macOS系统 */

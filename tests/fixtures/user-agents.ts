@@ -1,44 +1,74 @@
-import { DeviceType, EngineType } from '@/constants';
+import { DeviceType, CompanyType, EngineType, OSType } from '@/constants';
 
-export const browsers = {
+// 基础类型定义
+interface OSExpect {
+  name?: string;
+  version?: string;
+  type: string;
+}
+
+interface BrowserExpect extends OSExpect {
+  engine?: EngineType;
+}
+
+interface DeviceExpect {
+  type: DeviceType | string;
+  vendor?: string;
+  model?: string;
+  company?: CompanyType;
+}
+
+interface Example {
+  ua: string;
+  expect: OSExpect | BrowserExpect | DeviceExpect;
+}
+
+// 示例集合
+export const EXAMPLES: Record<string, Example> = {
+  // 浏览器示例
   chrome: {
     ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
     expect: {
       name: 'Chrome',
       version: '120.0.0.0',
       type: 'Chrome',
+      engine: EngineType.Blink,
     },
   },
   firefox: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:109.0) Gecko/20100101 Firefox/121.0',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:120.0) Gecko/20100101 Firefox/120.0',
     expect: {
       name: 'Firefox',
-      version: '121.0',
+      version: '120.0',
       type: 'Firefox',
+      engine: EngineType.Gecko,
     },
   },
   safari: {
-    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
     expect: {
       name: 'Safari',
       version: '17.1',
       type: 'Safari',
+      engine: EngineType.WebKit,
     },
   },
   edge: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 Edg/120.0.0.0',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Edg/120.0.0.0',
     expect: {
       name: 'Edge',
       version: '120.0.0.0',
       type: 'Edge',
+      engine: EngineType.Blink,
     },
   },
   opera: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 OPR/106.0.0.0',
+    ua: 'Opera/9.80 (Windows NT 10.0; WOW64) Presto/2.12.388 Version/12.17',
     expect: {
       name: 'Opera',
       version: '106.0.0.0',
       type: 'Opera',
+      engine: EngineType.Blink,
     },
   },
   ie: {
@@ -47,6 +77,7 @@ export const browsers = {
       name: 'Internet Explorer',
       version: '11.0',
       type: 'IE',
+      engine: EngineType.Trident,
     },
   },
   maxthon: {
@@ -55,50 +86,35 @@ export const browsers = {
       name: 'Maxthon',
       version: '7.0',
       type: 'Maxthon',
-    },
-  },
-  ucbrowser: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 UBrowser/7.0.185.1002 Safari/537.36',
-    expect: {
-      name: 'UC Browser',
-      version: '7.0.185.1002',
-      type: 'UCBrowser',
+      engine: EngineType.Blink,
     },
   },
   qqbrowser: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/94.0.4606.71 Safari/537.36 QQBrowser/9.0',
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 QQBrowser/4.0 Safari/537.36',
     expect: {
       name: 'QQ Browser',
-      version: '9.0',
+      version: '4.0',
       type: 'QQBrowser',
+      engine: EngineType.Blink,
     },
   },
   wechatMiniProgram: {
-    ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.0(0x18000000) NetType/WIFI Language/zh_CN miniProgram',
+    ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148 MicroMessenger/8.0.42(0x18002a2c) NetType/WIFI Language/zh_CN miniProgram',
     expect: {
       name: 'WeChat Mini Program',
-      version: '8.0.0',
+      version: '8.0.42',
       type: 'MiniProgram',
+      engine: EngineType.WebKit,
     },
   },
-  edgeHtml: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/52.0.2743.116 Safari/537.36 Edge/15.15063',
-    expect: {
-      name: 'Edge',
-      version: '15.15063',
-      type: 'Edge',
-      engine: EngineType.EdgeHTML,
-    },
-  },
-};
 
-export const operatingSystems = {
-  windows: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+  // 操作系统示例
+  windows10: {
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64)',
     expect: {
       name: 'Windows',
       version: '10.0',
-      type: 'Windows',
+      type: OSType.Windows,
     },
   },
   windowsServer: {
@@ -106,55 +122,41 @@ export const operatingSystems = {
     expect: {
       name: 'Windows Server',
       version: '10.0',
-      type: 'Windows Server',
+      type: OSType.WindowsServer,
     },
   },
-  macos: {
-    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Safari/605.1.15',
+  macos13: {
+    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6_3)',
     expect: {
       name: 'macOS',
-      version: '14.1',
-      type: 'macOS',
+      version: '13.6.3',
+      type: OSType.MacOS,
     },
   },
-  ios: {
-    ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 17_1_1 like Mac OS X)',
+  macos14: {
+    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
     expect: {
-      name: 'iOS',
-      version: '17.1.1',
-      type: 'iOS',
+      name: 'macOS',
+      version: '14.2.1',
+      type: OSType.MacOS,
     },
   },
-  ipados: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1',
+  macos15: {
+    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/130.0.0.0 Safari/537.36',
     expect: {
-      name: 'iPadOS',
-      version: '17.1',
-      type: 'iPadOS',
+      name: 'macOS',
+      version: '15.0',
+      type: OSType.MacOS,
     },
   },
-  watchos: {
-    ua: 'Mozilla/5.0 (Watch; CPU Watch OS 10_1 like Mac OS X) AppleWebKit/605.1.15',
-    expect: {
-      name: 'watchOS',
-      version: '10.1',
-      type: 'watchOS',
-    },
-  },
-  android: {
-    ua: 'Mozilla/5.0 (Linux; Android 14; Pixel 8)',
-    expect: {
-      name: 'Android',
-      version: '14',
-      type: 'Android',
-    },
-  },
+
+  // iOS 版本示例
   ios13: {
     ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 13_7 like Mac OS X)',
     expect: {
       name: 'iOS',
       version: '13.7',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
   ios14: {
@@ -162,7 +164,7 @@ export const operatingSystems = {
     expect: {
       name: 'iOS',
       version: '14.8',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
   ios15: {
@@ -170,7 +172,7 @@ export const operatingSystems = {
     expect: {
       name: 'iOS',
       version: '15.7.1',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
   ios16: {
@@ -178,7 +180,7 @@ export const operatingSystems = {
     expect: {
       name: 'iOS',
       version: '16.7.2',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
   ios17: {
@@ -186,7 +188,7 @@ export const operatingSystems = {
     expect: {
       name: 'iOS',
       version: '17.2.1',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
   ios18: {
@@ -194,74 +196,52 @@ export const operatingSystems = {
     expect: {
       name: 'iOS',
       version: '18.0',
-      type: 'iOS',
+      type: OSType.IOS,
     },
   },
+
+  // iPadOS 版本示例
   ipados15: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 15_7_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/15.7.1 Mobile/15E148 Safari/604.1',
+    ua: 'Mozilla/5.0 (iPad; CPU OS 15_7_1 like Mac OS X)',
     expect: {
       name: 'iPadOS',
       version: '15.7.1',
-      type: 'iPadOS',
+      type: OSType.IPadOS,
     },
   },
   ipados16: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 16_7_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.7.2 Mobile/15E148 Safari/604.1',
+    ua: 'Mozilla/5.0 (iPad; CPU OS 16_7_2 like Mac OS X)',
     expect: {
       name: 'iPadOS',
       version: '16.7.2',
-      type: 'iPadOS',
+      type: OSType.IPadOS,
     },
   },
   ipados17: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 17_2_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Mobile/15E148 Safari/604.1',
+    ua: 'Mozilla/5.0 (iPad; CPU OS 17_2_1 like Mac OS X)',
     expect: {
       name: 'iPadOS',
       version: '17.2.1',
-      type: 'iPadOS',
+      type: OSType.IPadOS,
     },
   },
   ipados18: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Mobile/15E148 Safari/604.1',
+    ua: 'Mozilla/5.0 (iPad; CPU OS 18_0 like Mac OS X)',
     expect: {
       name: 'iPadOS',
       version: '18.0',
-      type: 'iPadOS',
+      type: OSType.IPadOS,
     },
   },
-  macos13: {
-    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 13_6_3) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15',
-    expect: {
-      name: 'macOS',
-      version: '13.6.3',
-      type: 'macOS',
-    },
-  },
-  macos14: {
-    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 14_2_1) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.2.1 Safari/605.1.15',
-    expect: {
-      name: 'macOS',
-      version: '14.2.1',
-      type: 'macOS',
-    },
-  },
-  macos15: {
-    ua: 'Mozilla/5.0 (Macintosh; Intel Mac OS X 15_0) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.0 Safari/605.1.15',
-    expect: {
-      name: 'macOS',
-      version: '15.0',
-      type: 'macOS',
-    },
-  },
-};
 
-export const devices = {
+  // 设备示例
   iphone: {
     ua: 'Mozilla/5.0 (iPhone; CPU iPhone OS 14_0 like Mac OS X)',
     expect: {
       type: DeviceType.Phone,
       vendor: 'Apple',
-      model: '',
+      model: 'iPhone',
+      company: CompanyType.Apple,
     },
   },
   ipad: {
@@ -270,46 +250,7 @@ export const devices = {
       type: DeviceType.Tablet,
       vendor: 'Apple',
       model: 'iPad',
-    },
-  },
-  desktop: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    expect: {
-      type: 'desktop',
-      vendor: '',
-      model: '',
-    },
-  },
-  ipadPro: {
-    ua: 'Mozilla/5.0 (iPad; CPU OS 17_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.1 Mobile/15E148 Safari/604.1 Model/iPad Pro',
-    expect: {
-      type: 'tablet',
-      vendor: 'Apple',
-      model: 'iPad Pro',
-    },
-  },
-  androidTablet: {
-    ua: 'Mozilla/5.0 (Linux; Android 13; SM-T870) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    expect: {
-      type: 'tablet',
-      vendor: 'Samsung',
-      model: 'SM-T870',
-    },
-  },
-  huaweiPC: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 HuaweiComputer',
-    expect: {
-      type: 'desktop',
-      vendor: 'Huawei',
-      model: '',
-    },
-  },
-  huaweiPad: {
-    ua: 'Mozilla/5.0 (Linux; Android 12; BAH3-W09) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-    expect: {
-      type: 'tablet',
-      vendor: 'Huawei',
-      model: 'MatePad',
+      company: CompanyType.Apple,
     },
   },
   huaweiPhone: {
@@ -318,46 +259,25 @@ export const devices = {
       type: DeviceType.Phone,
       vendor: 'Huawei',
       model: 'NOH-AN00',
+      company: CompanyType.Huawei,
     },
   },
-  xiaomiPhone: {
-    ua: 'Mozilla/5.0 (Linux; Android 13; M2012K11AC) AppleWebKit/537.36 (KHTML, like Gecko)',
-    expect: {
-      type: DeviceType.Phone,
-      vendor: 'Xiaomi',
-      model: 'M2012K11AC',
-    },
-  },
-  xiaomiPad: {
-    ua: 'Mozilla/5.0 (Linux; Android 13; 23046RP50C) AppleWebKit/537.36 (KHTML, like Gecko)',
+  huaweiPad: {
+    ua: 'Mozilla/5.0 (Linux; Android 10; BAH3-W09) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/88.0.4324.93 Safari/537.36',
     expect: {
       type: DeviceType.Tablet,
-      vendor: 'Xiaomi',
-      model: 'Pad 6',
+      vendor: 'Huawei',
+      model: 'MatePad',
+      company: CompanyType.Huawei,
     },
   },
-  xiaomiPC: {
-    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36 XiaomiComputer',
+  huaweiPC: {
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 HuaweiComputer',
     expect: {
       type: DeviceType.Desktop,
-      vendor: 'Xiaomi',
-      model: '',
-    },
-  },
-  smartTV: {
-    ua: 'Mozilla/5.0 (SMART-TV; Linux; Tizen 4.0)',
-    expect: {
-      type: DeviceType.SmartTV,
-      vendor: 'Samsung',
-      model: '',
-    },
-  },
-  wearable: {
-    ua: 'Mozilla/5.0 (Linux; Android 9; HUAWEI Watch GT 2 Pro)',
-    expect: {
-      type: DeviceType.Wearable,
       vendor: 'Huawei',
-      model: 'Watch GT 2 Pro',
+      model: '',
+      company: CompanyType.Huawei,
     },
   },
   huaweiWatch: {
@@ -366,14 +286,89 @@ export const devices = {
       type: DeviceType.Wearable,
       vendor: 'Huawei',
       model: 'Watch GT 2 Pro',
+      company: CompanyType.Huawei,
     },
   },
-  playstation5: {
-    ua: 'Mozilla/5.0 (PlayStation; PlayStation 5/2.26)',
+  xiaomiPhone: {
+    ua: 'Mozilla/5.0 (Linux; Android 13; M2012K11AC)',
     expect: {
-      type: DeviceType.Console,
-      vendor: 'Sony',
-      model: 'PlayStation 5',
+      type: DeviceType.Phone,
+      vendor: 'Xiaomi',
+      model: 'M2012K11AC',
+      company: CompanyType.Xiaomi,
     },
   },
+  xiaomiPC: {
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36 XiaomiComputer',
+    expect: {
+      type: DeviceType.Desktop,
+      vendor: 'Xiaomi',
+      model: '',
+      company: CompanyType.Xiaomi,
+    },
+  },
+  xiaomiPad: {
+    ua: 'Mozilla/5.0 (Linux; Android 11; 21051182G) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.104 Safari/537.36',
+    expect: {
+      type: DeviceType.Tablet,
+      vendor: 'Xiaomi',
+      model: 'Pad 5',
+      company: CompanyType.Xiaomi,
+    },
+  },
+
+  desktop: {
+    ua: 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+    expect: {
+      type: DeviceType.Desktop,
+      vendor: '',
+      model: '',
+      company: CompanyType.Unknown,
+    },
+  },
+};
+
+// 导出引用集合
+export const BROWSER_EXAMPLES = {
+  chrome: EXAMPLES.chrome,
+  firefox: EXAMPLES.firefox,
+  safari: EXAMPLES.safari,
+  edge: EXAMPLES.edge,
+  opera: EXAMPLES.opera,
+  ie: EXAMPLES.ie,
+  maxthon: EXAMPLES.maxthon,
+  qqbrowser: EXAMPLES.qqbrowser,
+  wechatMiniProgram: EXAMPLES.wechatMiniProgram,
+};
+
+export const OS_EXAMPLES = {
+  windows10: EXAMPLES.windows10,
+  windowsServer: EXAMPLES.windowsServer,
+  macos13: EXAMPLES.macos13,
+  macos14: EXAMPLES.macos14,
+  macos15: EXAMPLES.macos15,
+  ios13: EXAMPLES.ios13,
+  ios14: EXAMPLES.ios14,
+  ios15: EXAMPLES.ios15,
+  ios16: EXAMPLES.ios16,
+  ios17: EXAMPLES.ios17,
+  ios18: EXAMPLES.ios18,
+  ipados15: EXAMPLES.ipados15,
+  ipados16: EXAMPLES.ipados16,
+  ipados17: EXAMPLES.ipados17,
+  ipados18: EXAMPLES.ipados18,
+};
+
+export const DEVICE_EXAMPLES = {
+  desktop: EXAMPLES.desktop,
+  iphone: EXAMPLES.ios16,
+  ipad: EXAMPLES.ipados17,
+  // ipadPro: EXAMPLES.ipadPro,
+  huaweiPhone: EXAMPLES.huaweiPhone,
+  huaweiPad: EXAMPLES.huaweiPad,
+  huaweiWatch: EXAMPLES.huaweiWatch,
+  huaweiPC: EXAMPLES.huaweiPC,
+  xiaomiPhone: EXAMPLES.xiaomiPhone,
+  xiaomiPC: EXAMPLES.xiaomiPC,
+  xiaomiPad: EXAMPLES.xiaomiPad,
 };
