@@ -1,8 +1,9 @@
 {
-  "extends": "./tsconfig.base.json",
-  "include": ["src", "index.d.ts"],
-  "exclude": ["node_modules", "lib", "lib-es", "**/*.spec.ts"],
   "compilerOptions": {
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "types": ["vitest/globals"]
   }
 }
