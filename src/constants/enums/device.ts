@@ -3,8 +3,8 @@
  * @enum {string}
  */
 export enum DeviceType {
-  /** 移动设备 */
-  Mobile = 'mobile',
+  /** 手机设备 */
+  Phone = 'phone',
   /** 平板设备 */
   Tablet = 'tablet',
   /** 桌面设备 */
@@ -120,5 +120,28 @@ export enum CPUArchitecture {
   /** ARM64架构 */
   ARM64 = 'arm64',
   /** 未知架构 */
+  Unknown = 'unknown',
+}
+
+/**
+ * 公司类型枚举
+ * @enum {string}
+ */
+export enum CompanyType {
+  /** 苹果公司 */
+  Apple = 'apple',
+  /** 华为公司 */
+  Huawei = 'huawei',
+  /** 小米公司 */
+  Xiaomi = 'xiaomi',
+  /** 黑莓公司 */
+  BlackBerry = 'blackberry',
+  /** 谷歌公司 */
+  Google = 'google',
+  /** 腾讯公司 */
+  Tencent = 'tencent',
+  /** 三星公司 */
+  Samsung = 'samsung',
+  /** 未知公司 */
   Unknown = 'unknown',
 }

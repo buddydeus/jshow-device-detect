@@ -1,2 +1,3 @@
-export * from './enums/map';
+export * from './map';
 export * from './regexp';
+export * from './enums';

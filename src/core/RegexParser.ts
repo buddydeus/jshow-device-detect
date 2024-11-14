@@ -1,4 +1,4 @@
-import { ParserField } from '../constants/enums/parser';
+import { ParserField } from '../constants';
 
 type ParserValue = string | RegExp;
 type ParserFieldConfig = ParserField | [ParserField, ParserValue, string?];

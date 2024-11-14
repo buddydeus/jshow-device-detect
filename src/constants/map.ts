@@ -1,8 +1,19 @@
-import { BrowserType, DeviceType, EngineType, OSType } from '@/index';
+import {
+  BrowserType,
+  DeviceType,
+  EngineType,
+  OSType,
+  CompanyType,
+} from './enums';
 
 /**
  * 浏览器类型映射表
+ * @remarks
  * 用于将小写的浏览器名称映射到对应的枚举值
+ * @example
+ * ```ts
+ * BROWSER_MAP['chrome'] // BrowserType.Chrome
+ * ```
  */
 export const BROWSER_MAP: Record<string, BrowserType> = {
   chrome: BrowserType.Chrome,
@@ -19,7 +30,12 @@ export const BROWSER_MAP: Record<string, BrowserType> = {
 
 /**
  * 操作系统类型映射表
+ * @remarks
  * 用于将小写的操作系统名称映射到对应的枚举值
+ * @example
+ * ```ts
+ * OS_MAP['windows'] // OSType.Windows
+ * ```
  */
 export const OS_MAP: Record<string, OSType> = {
   windows: OSType.Windows,
@@ -34,10 +50,15 @@ export const OS_MAP: Record<string, OSType> = {
 
 /**
  * 设备类型映射表
+ * @remarks
  * 用于将小写的设备类型名称映射到对应的枚举值
+ * @example
+ * ```ts
+ * DEVICE_MAP['mobile'] // DeviceType.Mobile
+ * ```
  */
 export const DEVICE_MAP: Record<string, DeviceType> = {
-  mobile: DeviceType.Mobile,
+  phone: DeviceType.Phone,
   tablet: DeviceType.Tablet,
   desktop: DeviceType.Desktop,
   smarttv: DeviceType.SmartTV,
@@ -47,7 +68,12 @@ export const DEVICE_MAP: Record<string, DeviceType> = {
 
 /**
  * 引擎类型映射表
+ * @remarks
  * 用于将小写的引擎名称映射到对应的枚举值
+ * @example
+ * ```ts
+ * ENGINE_MAP['webkit'] // EngineType.WebKit
+ * ```
  */
 export const ENGINE_MAP: Record<string, EngineType> = {
   webkit: EngineType.WebKit,
@@ -57,3 +83,19 @@ export const ENGINE_MAP: Record<string, EngineType> = {
   edgehtml: EngineType.EdgeHTML,
   blink: EngineType.Blink,
 };
+
+/**
+ * 公司类型映射表
+ * @constant
+ */
+export const COMPANY_MAP: Record<string, CompanyType> = {
+  apple: CompanyType.Apple,
+  huawei: CompanyType.Huawei,
+  samsung: CompanyType.Samsung,
+  blackberry: CompanyType.BlackBerry,
+  google: CompanyType.Google,
+  tencent: CompanyType.Tencent,
+  qq: CompanyType.Tencent,
+  wechat: CompanyType.Tencent,
+  micromessenger: CompanyType.Tencent,
+} as const;

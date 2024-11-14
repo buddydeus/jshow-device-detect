@@ -1,9 +1,10 @@
 import { DeviceDetector } from '@/core/DeviceDetector';
 import { devices } from '../fixtures/user-agents';
+import { DeviceType } from '@/constants';
 
-describe('Device Detection', () => {
+describe('设备类型检测', () => {
   Object.entries(devices).forEach(([name, data]) => {
-    it(`should detect ${name} device correctly`, () => {
+    it(`应正确识别 ${name} 设备`, () => {
       const detector = new DeviceDetector(data.ua);
       const result = detector.getDeviceInfo().device;
 
@@ -13,26 +14,65 @@ describe('Device Detection', () => {
     });
   });
 
-  describe('Device Type Helpers', () => {
-    it('should detect mobile device', () => {
-      const detector = new DeviceDetector(devices.iphone.ua);
-      expect(detector.isMobile()).toBe(true);
-      expect(detector.isTablet()).toBe(false);
-      expect(detector.isDesktop()).toBe(false);
+  describe('设备类型辅助函数', () => {
+    it('应正确识别移动设备', () => {
+      // 手机设备测试
+      const phoneDetector = new DeviceDetector(devices.iphone.ua);
+      expect(phoneDetector.isPhone()).toBe(true);
+      expect(phoneDetector.isMobile()).toBe(true);
+
+      // 平板设备测试
+      const tabletDetector = new DeviceDetector(devices.ipad.ua);
+      expect(tabletDetector.isPad()).toBe(true);
+      expect(tabletDetector.isMobile()).toBe(true);
+
+      // 桌面设备测试
+      const desktopDetector = new DeviceDetector(devices.desktop.ua);
+      expect(desktopDetector.isDesktop()).toBe(true);
+      expect(desktopDetector.isMobile()).toBe(false);
     });
 
-    it('should detect tablet device', () => {
-      const detector = new DeviceDetector(devices.ipad.ua);
-      expect(detector.isMobile()).toBe(false);
-      expect(detector.isTablet()).toBe(true);
-      expect(detector.isDesktop()).toBe(false);
+    it('应正确识别可穿戴设备', () => {
+      const detector = new DeviceDetector(devices.huaweiWatch.ua);
+      expect(detector.isWearable()).toBe(true);
+    });
+  });
+
+  describe('特殊设备类型检测', () => {
+    it('应正确识别智能电视', () => {
+      const detector = new DeviceDetector(devices.smartTV.ua);
+      expect(detector.isSmartTV()).toBe(true);
+      expect(detector.getDeviceInfo().device.type).toBe(DeviceType.SmartTV);
     });
 
-    it('should detect desktop device', () => {
-      const detector = new DeviceDetector(devices.desktop.ua);
-      expect(detector.isMobile()).toBe(false);
-      expect(detector.isTablet()).toBe(false);
-      expect(detector.isDesktop()).toBe(true);
+    it('应正确识别游戏主机', () => {
+      const detector = new DeviceDetector(devices.playstation5.ua);
+      expect(detector.isConsole()).toBe(true);
+      expect(detector.getDeviceInfo().device.type).toBe(DeviceType.Console);
+    });
+
+    it('应正确识别可穿戴设备', () => {
+      const detector = new DeviceDetector(devices.huaweiWatch.ua);
+      expect(detector.isWearable()).toBe(true);
+      expect(detector.getDeviceInfo().device.type).toBe(DeviceType.Wearable);
+    });
+  });
+});
+
+describe('扩展设备类型检测', () => {
+  describe('小米设备检测', () => {
+    it('应正确识别小米手机', () => {
+      const detector = new DeviceDetector(devices.xiaomiPhone.ua);
+      const info = detector.getDeviceInfo();
+      expect(info.device.type).toBe(DeviceType.Phone);
+      expect(info.device.model).toBe('M2012K11AC');
+    });
+
+    it('应正确识别小米平板', () => {
+      const detector = new DeviceDetector(devices.xiaomiPad.ua);
+      const info = detector.getDeviceInfo();
+      expect(info.device.type).toBe(DeviceType.Tablet);
+      expect(info.device.model).toBe('Pad 6');
     });
   });
 });

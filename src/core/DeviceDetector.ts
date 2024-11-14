@@ -1,28 +1,59 @@
-import { RegexParser } from '../utils/RegexParser';
-import { REGEXPS } from '../constants/regexp';
+import { RegexParser } from './RegexParser';
 import {
+  BROWSER_MAP,
+  DEVICE_MAP,
+  ENGINE_MAP,
+  OS_MAP,
+  REGEXPS,
   BrowserType,
   OSType,
   EngineType,
   DeviceType,
   CPUArchitecture,
-} from '../constants/enums/device';
+  CompanyType,
+  DEVICE_PATTERNS,
+  COMPANY_MAP,
+} from '../constants';
 import type { DeviceInfo, Browser, Engine, OS, Device, CPU } from '../types';
-import { DEVICE_MAP, ENGINE_MAP, OS_MAP } from '../constants';
+
+/**
+ * 处理可选 UA 的工具函数
+ * @param detector - 当前的检测器实例
+ * @param ua - 可选的 UA 字符串
+ * @param callback - 回调函数
+ */
+const withUA = <T>(
+  detector: DeviceDetector,
+  ua: string | undefined,
+  callback: (detector: DeviceDetector) => T
+): T => (ua ? callback(new DeviceDetector(ua)) : callback(detector));
+
+const withInfo = <T>(
+  detector: DeviceDetector,
+  ua: string | undefined,
+  callback: (info: DeviceInfo) => T
+): T => withUA(detector, ua, (d) => callback(d.getDeviceInfo()));
 
 /**
  * 设备检测器类
- * 用于检测当前设备的浏览器、操作系统、CPU等信息
+ * 用于解析和判断用户设备类型、操作系统、浏览器等信息
  */
 export class DeviceDetector {
-  /** 用户代理字符串 */
+  /**
+   * 用户代理字符串
+   * @private
+   */
   private _ua: string;
-  /** 设备信息缓存 */
+
+  /**
+   * 解析后的设备信息缓存
+   * @private
+   */
   private _deviceInfo: DeviceInfo;
 
   /**
    * 创建设备检测器实例
-   * @param userAgent - 可选的用户代理字符串，如果不提供则使用当前环境的
+   * @param userAgent - 可选的用户代理字符串，如果不提供则使用当前浏览器的 UA
    */
   constructor(userAgent?: string) {
     this._ua =
@@ -33,7 +64,7 @@ export class DeviceDetector {
 
   /**
    * 解析设备信息
-   * @returns {DeviceInfo} 完整的设备信息对象
+   * @returns {DeviceInfo} 完整的设备信对象
    * @private
    */
   private parseDeviceInfo(): DeviceInfo {
@@ -67,11 +98,32 @@ export class DeviceDetector {
    * @private
    */
   private parseEngine(): Engine {
-    const result = RegexParser.parse(this._ua, REGEXPS.engine);
+    const ua = this._ua.toLowerCase();
+    let engineName = EngineType.Unknown;
+    let engineVersion = '';
+
+    if (ua.includes('edge/')) {
+      engineName = EngineType.EdgeHTML;
+      const match = ua.match(/edge\/(\d+(\.\d+)?)/i);
+      engineVersion = match?.[1] || '';
+    } else if (ua.includes('chrome/') || ua.includes('edg/')) {
+      engineName = EngineType.Blink;
+      const match = ua.match(/(?:chrome|edg)\/(\d+(\.\d+)?)/i);
+      engineVersion = match?.[1] || '';
+    } else if (ua.includes('firefox/')) {
+      engineName = EngineType.Gecko;
+      const match = ua.match(/firefox\/(\d+(\.\d+)?)/i);
+      engineVersion = match?.[1] || '';
+    } else if (ua.includes('webkit')) {
+      engineName = EngineType.WebKit;
+      const match = ua.match(/webkit\/(\d+(\.\d+)?)/i);
+      engineVersion = match?.[1] || '';
+    }
+
     return {
-      type: this.getEngineType(result.name),
-      name: result.name || 'unknown',
-      version: result.version || '',
+      type: engineName,
+      name: engineName,
+      version: engineVersion,
     };
   }
 
@@ -83,30 +135,17 @@ export class DeviceDetector {
   private parseOS(): OS {
     const result = RegexParser.parse(this._ua, REGEXPS.os);
     const name = result.name || 'unknown';
+    const lowerName = name.toLowerCase();
+
+    // 特殊处理 macOS 的显示名称
+    const displayName =
+      lowerName === 'macos' || lowerName === 'mac os' ? 'Mac OS' : name;
 
     return {
-      name: this.getOSName(name),
+      name: displayName,
       version: result.version || '',
       type: this.getOSType(name),
     };
-  }
-
-  /**
-   * 获取操作系统显示名称
-   * @param name - 原始操作系统名称
-   * @returns {string} 格式化后的操作系统名称
-   * @private
-   */
-  private getOSName(name: string): string {
-    if (!name) return 'unknown';
-
-    // 特殊处理 macOS 的显示名称
-    const lowerName = name.toLowerCase();
-    if (lowerName === 'macos' || lowerName === 'mac os') {
-      return 'Mac OS';
-    }
-
-    return name;
   }
 
   /**
@@ -132,32 +171,30 @@ export class DeviceDetector {
    * @private
    */
   private parseDevice(): Device {
-    const result = RegexParser.parse(this._ua, REGEXPS.device);
-    const type = this.getDeviceType(result.type);
-    let vendor = result.vendor || '';
-    let model = result.model || '';
+    const ua = this._ua.toLowerCase();
+    let deviceType = DeviceType.Desktop;
+    let vendor = '';
+    let model = '';
 
-    // 处理特殊设备
-    if (this._ua.toLowerCase().includes('huaweicomputer')) {
-      vendor = 'Huawei';
-    } else if (this._ua.includes('BAH3-W09')) {
-      vendor = 'Huawei';
-      model = 'MatePad';
-    } else if (this._ua.includes('NOH-AN00')) {
-      vendor = 'Huawei';
-      model = 'Mate 40 Pro';
-    } else if (this._ua.includes('SM-T870')) {
-      vendor = 'Samsung';
-      model = 'SM-T870';
-    } else if (this._ua.toLowerCase().includes('ipad pro')) {
-      vendor = 'Apple';
-      model = 'iPad Pro';
+    // 使用 DEVICE_PATTERNS 进行匹配
+    for (const { pattern, device } of DEVICE_PATTERNS) {
+      const matches = ua.match(pattern);
+      if (matches) {
+        deviceType = device.type || deviceType;
+        vendor = device.vendor || vendor;
+        model =
+          typeof device.model === 'string'
+            ? device.model
+            : device.model?.(matches) || '';
+        break;
+      }
     }
 
     return {
-      type,
+      type: deviceType,
       vendor,
       model,
+      company: this.getCompanyType(vendor),
     };
   }
 
@@ -170,14 +207,25 @@ export class DeviceDetector {
     const ua = this._ua.toLowerCase();
     let architecture = CPUArchitecture.Unknown;
 
-    if (ua.includes('x86_64') || ua.includes('x64')) {
-      architecture = CPUArchitecture.x64;
-    } else if (ua.includes('x86') || ua.includes('i686')) {
-      architecture = CPUArchitecture.x86;
-    } else if (ua.includes('arm64') || ua.includes('aarch64')) {
+    // iOS 设备默认为 ARM64
+    if (ua.includes('iphone') || ua.includes('ipad') || ua.includes('ipod')) {
+      architecture = CPUArchitecture.ARM64;
+    } else if (ua.includes('aarch64') || ua.includes('arm64')) {
       architecture = CPUArchitecture.ARM64;
     } else if (ua.includes('arm')) {
       architecture = CPUArchitecture.ARM;
+    } else if (
+      ua.includes('x86_64') ||
+      ua.includes('amd64') ||
+      ua.includes('x64')
+    ) {
+      architecture = CPUArchitecture.x64;
+    } else if (
+      ua.includes('x86') ||
+      ua.includes('i686') ||
+      ua.includes('i386')
+    ) {
+      architecture = CPUArchitecture.x86;
     }
 
     return { architecture };
@@ -190,25 +238,8 @@ export class DeviceDetector {
    * @private
    */
   private getBrowserType(name?: string): BrowserType {
-    if (!name) {
-      return BrowserType.Unknown;
-    }
-
-    const browserMap: Record<string, BrowserType> = {
-      chrome: BrowserType.Chrome,
-      firefox: BrowserType.Firefox,
-      safari: BrowserType.Safari,
-      edge: BrowserType.Edge,
-      ie: BrowserType.IE,
-      opera: BrowserType.Opera,
-      'opera mini': BrowserType.OperaMini,
-      uc: BrowserType.UCBrowser,
-      qq: BrowserType.QQBrowser,
-      maxthon: BrowserType.Maxthon,
-      sogou: BrowserType.SouGou,
-    };
-
-    return browserMap[name.toLowerCase()] || BrowserType.Unknown;
+    if (!name) return BrowserType.Unknown;
+    return BROWSER_MAP[name.toLowerCase()] || BrowserType.Unknown;
   }
 
   /**
@@ -233,20 +264,107 @@ export class DeviceDetector {
     return DEVICE_MAP[type.toLowerCase()] || DeviceType.Desktop;
   }
 
-  // 公共接口
-  public isMobile(): boolean {
-    return this._deviceInfo.device.type === DeviceType.Mobile;
+  /**
+   * 获取公司类型
+   * @param vendor - 设备制造商
+   * @returns {CompanyType} 公司类型枚举值
+   * @private
+   */
+  private getCompanyType(vendor: string): CompanyType {
+    if (!vendor) {
+      // 特殊处理腾讯产品和黑莓设备
+      const ua = this._ua.toLowerCase();
+
+      if (ua.includes('qqbrowser')) {
+        return CompanyType.Tencent;
+      }
+
+      if (ua.includes('bb10') || ua.includes('blackberry')) {
+        return CompanyType.BlackBerry;
+      }
+
+      return CompanyType.Unknown;
+    }
+
+    const vendorLower = vendor.toLowerCase();
+
+    // 通过厂商名称映射
+    const companyMap: Record<string, CompanyType> = {
+      apple: CompanyType.Apple,
+      huawei: CompanyType.Huawei,
+      google: CompanyType.Google,
+      samsung: CompanyType.Samsung,
+      blackberry: CompanyType.BlackBerry,
+      tencent: CompanyType.Tencent,
+    };
+
+    return companyMap[vendorLower] || CompanyType.Unknown;
   }
 
-  public isTablet(): boolean {
-    return this._deviceInfo.device.type === DeviceType.Tablet;
-  }
-
-  public isDesktop(): boolean {
-    return this._deviceInfo.device.type === DeviceType.Desktop;
-  }
-
-  public getDeviceInfo(): DeviceInfo {
+  /**
+   * 获取设备信息
+   * @param ua - 可选的用户代理字符串
+   * @returns 设备信息对象
+   */
+  public getDeviceInfo(ua?: string): DeviceInfo {
+    if (ua) {
+      return new DeviceDetector(ua)._deviceInfo;
+    }
     return this._deviceInfo;
+  }
+
+  /**
+   * 判断是否为桌面设备
+   * @param ua - 可选的用户代理字符串
+   * @returns 如果是桌面设备返回 true，否则返回 false
+   */
+  public isDesktop(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.Desktop;
+  }
+
+  /**
+   * 判断是否为游戏主机
+   * @param ua - 可选的用户代理字符串
+   * @returns 如果是游戏主机返回 true，否则返回 false
+   */
+  public isConsole(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.Console;
+  }
+
+  /**
+   * 判断是否为可穿戴设备
+   */
+  public isWearable(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.Wearable;
+  }
+
+  // 公共接口
+  public isMobile(ua?: string): boolean {
+    return withUA(
+      this,
+      ua,
+      (detector) => detector.isPhone() || detector.isPad()
+    );
+  }
+
+  /**
+   * 判断是否为手机设备
+   */
+  public isPhone(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.Phone;
+  }
+
+  /**
+   * 判断是否为平板设备
+   */
+  public isPad(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.Tablet;
+  }
+
+  /**
+   * 判断是否为智能电视
+   */
+  public isSmartTV(ua?: string): boolean {
+    return this.getDeviceInfo(ua).device.type === DeviceType.SmartTV;
   }
 }
