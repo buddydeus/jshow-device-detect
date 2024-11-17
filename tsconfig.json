@@ -3,6 +3,6 @@
   "include": ["src", "index.d.ts"],
   "exclude": ["node_modules", "lib", "lib-es", "**/*.spec.ts"],
   "compilerOptions": {
-    "baseUrl": "."
+    "types": ["vitest/globals"]
   }
 }

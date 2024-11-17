@@ -2,8 +2,8 @@
   "exclude": ["node_modules"],
   "compilerOptions": {
     "outDir": "lib",
-    "target": "es2019",
-    "module": "commonjs",
+    "target": "ESNext",
+    "module": "ESNext",
     "moduleResolution": "node",
     "allowJs": false,
     "declaration": true,
@@ -21,10 +21,13 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "strict": true,
-    "suppressExcessPropertyErrors": true,
-    "suppressImplicitAnyIndexErrors": true,
     "forceConsistentCasingInFileNames": true,
     "esModuleInterop": true,
-    "isolatedModules": true
+    "isolatedModules": true,
+
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["src/*"]
+    }
   }
 }
